@@ -221,3 +221,136 @@ You could still use some workarounds to solve the problem of exploding gradients
 But the problem of vanishing gradients is a more serious one. The vanishing gradient problem is so rampant and serious in the case of RNNs that it renders RNNs useless in practical applications. One way to get rid of this problem is to use short sequences instead of long sequences. But this is more of a compromise than a solution - it restricts the applications where RNNs can be used.
 
 To get rid of the vanishing gradient problem, researchers have been tinkering around with the RNN architecture for a long while. The most notable and popular modifications are the **long short-term memory units (LSTMs)** and the **gated recurrent units (GRUs)**.
+
+
+## Variants of RNNs
+
+### Introduction
+In this session, you’ll study some variants of the original RNN architecture. 
+
+First, you will study a novel RNN architecture - the **Bidirectional RNN** which is capable of reading sequences in the 'reverse order' as well and has proven to boost performance significantly. 
+
+Then you will study two important cutting-edge variants of the RNN which have made it possible to train large networks on real datasets. In the previous session, you saw that although RNNs are capable of solving a variety of sequence problems, their architecture itself is their biggest enemy. You learnt about the problems of exploding and vanishing gradients which occur during the training of RNNs. In this section, you’ll learn how this problem is solved by two popular **gated RNN architectures** - the **Long, Short Term Memory (LSTM)** and the **Gated Recurrent Unit (GRU)**.
+
+### Bidirectional RNNs
+In the previous session, we had discussed various types of tasks that can be solved using RNNs - some examples are POS tagging, sentiment classification, machine translation, speech recognition, video classification, etc. 
+
+Now, there is a fundamental difference between these tasks - in some tasks, the entire sequence is available to the network before it starts making predictions, while in some other tasks the network has to make predictions continuously as new inputs come in.
+
+For example, when you want to **assign a sentiment** score to a piece of text (say a customer review), the network can see the entire review text before assigning them a score. On the other hand, in a task such as **predicting the next word** given previous few typed words, the network does not have access to the words in the future time steps while predicting the next word.
+
+These **two types of tasks** are called **offline and online sequence processing** respectively.
+
+Now, there is a neat trick you can use with **offline tasks** - since the network has access to the entire sequence before making predictions, why not use this task to make the network 'look at the future elements in the sequence' while training, hoping that this will make the network learn better?
+
+This is the idea exploited by what are called **bidirectional RNNs**.
+
+In the following segment, we explains the two types of tasks and how bidirectional RNNs boost the performance of offline processing tasks. 
+
+Thus, there are two types of sequences:
+1. **Online sequence:** Here, you don’t have access to the entire sequence before you start processing it. The network has to make predictions as it sees each input coming in.
+2. **Offline sequence:** The entire sequence is available before you start processing it.
+
+A bidirectional RNN can only be applied to **offline sequences**.
+
+![title](img/bi-directional.png)
+
+By using bidirectional RNNs, it is almost certain that you’ll get better results. However, bidirectional RNNs take almost double the time to train since the number of parameters of the network increase. Therefore, you have a tradeoff between training time and performance. The decision to use a bidirectional RNN depends on the computing resources that you have and the performance you are aiming for.
+
+![title](img/bidirectional_rnn.png)
+
+### Long, Short-term Memory Networks
+In the previous session, we had discussed the problem of **vanishing and exploding gradients** that RNNs face. Let’s revisit this problem once and then we'll be ready to study how LSTMs solve it.
+
+![title](img/vanilla_rnn.JPG)
+
+In the case of RNNs, the main problem is the **vanishing gradients** problem.
+
+To solve the vanishing gradients problem, many attempts have been made to tweak the vanilla RNNs such that the gradients don’t die when sequences get long. The most popular and successful of these attempts has been the **long, short-term memory network**, or the **LSTM**. LSTMs have proven to be so effective that they have almost replaced vanilla RNNs.
+
+The main drastic improvement that LSTMs have brought is because of a novel change in the **structure of a neuron** itself. In the case of LSTMs, the neurons are called cells, and an **LSTM cell** is different from a normal neuron in many ways.
+
+Let’s study LSTM networks in the following lecture.
+
+Thus, one of the fundamental differences between an RNN and an LSTM is that an LSTM has an **explicit memory unit** which stores information relevant for learning some task. In the standard RNN, the only way the network remembers past information is through updating the hidden states over time, but it does not have an explicit memory to store information.
+
+On the other hand, in LSTMs, the memory units retain pieces of information even when the sequences get really long. In the next section, we’ll look at another important feature of the LSTM cell - **gating mechanisms**.
+
+**Additional Reading**
+1. [One of the first successful speech recognition solutions using LSTMs, Alex Graves et al](https://arxiv.org/pdf/1303.5778.pdf)
+
+### Characteristics of an LSTM Cell
+In the previous section, you briefly learnt about the notion of 'cell state' or an **explicit memory** of an LSTM. In this lecture, take a look at the next important characteristic of LSTMs.
+
+The **gating mechanisms** allow modifying the state in certain ways. You’ll learn about how exactly the gating mechanisms work in the next section, though the main idea is that gating mechanisms **regulate the information** that the network stores (and passes on to the next layer) or forgets.
+
+Now, let’s look at the third and final characteristic of an LSTM cell which helps **get rid of the vanishing gradient problem**.
+
+![title](img/lstm.png)
+
+The structure of an LSTM cell allows an LSTM network to have a smooth and uninterrupted flow of gradients while backpropagating. This flow is also called the **constant error carousel**. This third characteristic more or less a result of the first two characteristics and is the reason LSTMs are able to solve the problem of vanishing and exploding gradients.
+
+To summarise, the LSTM is characterised by the following three main properties:
+* The cells have an explicit 'memory'
+* The gating mechanisms
+* Constant error carousel
+
+### Structure of an LSTM Cell
+In the previous segment, we had discussed the three main characteristics of an LSTM cell:
+* Presence of an explicit 'memory' called the cell state
+* Gating mechanisms
+* Constant error carousel
+
+In this segment, you’ll study the LSTM cell in detail.
+
+Before that, let’s look at some standard notations used in the LSTM cell. There are a few changes in the notations that you’ve seen till now. In the following sections, we have used ‘h’ and ‘a’ interchangeably to denote the activations coming out of a layer.
+
+Now, let’s look at the structure of an LSTM cell.
+
+![title](img/lstm1.JPG)
+
+![title](img/lstm2.JPG)
+
+![title](img/lstm3.JPG)
+
+Before moving ahead to study the LSTM cell in further detail, it will be useful to recall the common activation functions used in neural networks. Recollect that the sigmoid function outputs a value between 0 and 1 while the tanh outputs a value between -1 and +1. Both these functions are shown below.
+
+![title](img/sigmoid.JPG)
+
+The following graph shows the tanh function. Note that the values of the function lie between -1 and +1.
+
+![title](img/tanh.JPG)
+
+Now, let’s look at how the gating mechanism of the LSTM cell.
+
+![title](img/full_lstm_cell.png)
+
+You saw the structure of the LSTM cell. You also saw the three gating mechanisms - the **forget gate**, the **update gate** and the **output gate**.
+
+Let’s understand the intuition of each gate with a specific example. Let’s say you’re working on a **video tagging problem** where you need to tag the action that takes place in each frame of the video. Let’s look at the function of each gate in the context of this problem:
+
+![title](img/forget_update.JPG)
+
+![title](img/output.JPG)
+
+### LSTM Network: Feedforward Equations
+Now that you have studied the structure of an LSTM cell, it’ll be easier to follow the LSTM feedforward equations. It would be helpful to recall the feedforward equations of a standard RNN network:
+
+![title](img/lstm4.JPG)
+
+The LSTM equation will also be written in the same fashion, that is, using concatenated weight matrices and concatenated activations. Let’s now look at the LSTM feedforward equations.
+
+Here is a detailed architecture of an LSTM cell.
+
+![title](img/lstm5.JPG)
+
+![title](img/lstm6.JPG)
+
+![title](img/lstm7.JPG)
+
+### GRUs and Other Variants
+Keeping in mind the computational expenses and the problem of overfitting, researchers have tried to come up with alternate structures of the LSTM cell. The most popular one of these alternatives is the **gated recurrent unit (GRU)** which was introduced in late 2014. Let’s look at these alternative structures in a bit more detail.
+
+A detailed discussion on GRUs is beyond the scope of this course. However, you’ll learn how to implement GRUs in Keras in the next session (to build a POS tagger).
+
+LSTMs and GRUs have almost completely replaced the standard RNNs in practice because they’re more effective and faster to train than vanilla RNNs (despite the larger number of parameters). In most sequence problems, the problem of vanishing gradient is far severe than training time.
